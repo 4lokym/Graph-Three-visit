@@ -38,6 +38,32 @@ class MyNode {
     }
     return graph;
   }
+
+  visitDepthFirst(callback = () => {}){
+    const root = this;
+    const seen = {};
+    const stack = [];
+    const graph = [];
+
+    seen[root.content] = 1;
+    stack.unshift(root);
+
+    while(stack.length !== 0){
+      let temp = stack.shift();
+      graph.push(temp);
+      callback(temp);
+      for(let t of temp.nearNodes){
+        if(seen[t.content]){
+          continue
+        }else{
+          stack.unshift(t);
+          seen[t.content] = 1;
+        }
+      }
+    }  
+    return graph;
+  }
+
 }
 
 const s = new MyNode(`s`, []);
@@ -61,10 +87,18 @@ MyNode.connect(e, g);
 MyNode.connect(g, f);
 MyNode.connect(g, h);
 
-const graph = MyNode.visitBreadthFirst(s);
+let graph = MyNode.visitBreadthFirst(s);
 
-const n = performance.now();
+let n = performance.now();
 console.log(graph);
-const n1 = performance.now();
+let n1 = performance.now();
+
+console.log(`${n1- n}ms`)
+
+
+graph = s.visitDepthFirst();
+n = performance.now();
+console.log(graph);
+n1 = performance.now();
 
 console.log(`${n1- n}ms`)
